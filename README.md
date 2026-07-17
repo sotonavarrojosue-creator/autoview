@@ -1,5 +1,10 @@
 # AUTOVIEW
 
+[![Python](https://img.shields.io/badge/Python-3.11%2B-blue?logo=python)](https://python.org)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.115%2B-009688?logo=fastapi)](https://fastapi.tiangolo.com)
+[![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
+[![Systemd](https://img.shields.io/badge/Systemd-Timer-orange?logo=linux)](https://systemd.io)
+
 Gmail → LLM → Google Calendar automation with systemd timer and Telegram reporter.
 
 ## What it does
@@ -49,32 +54,45 @@ autoview/
 ├── requirements.txt
 ├── install.sh              # Systemd installer
 ├── run-dashboard.sh        # Dashboard launcher
+├── config/                 # OAuth credentials (gitignored)
+├── data/                   # SQLite state (gitignored)
 ├── docs/
 │   └── SETUP_GOOGLE.md
-├── scripts/
-│   └── acceso_remoto.sh    # Tailscale/ngrok/Cloudflare
 ├── src/
 │   ├── __init__.py
 │   ├── state.py            # SQLite state management
 │   ├── config.py           # Settings with .env support
 │   ├── gmail_reader.py     # Gmail API wrapper
 │   ├── event_extractor.py  # LLM event extraction
-│   ├── calendar_writer.py  # Google Calendar API
+│   ├── calendar_writer.py  # Calendar API wrapper
 │   └── telegram_reporter.py # Telegram bot
-└── config/                 # OAuth credentials (gitignored)
-    ├── credentials.json
-    └── token.json
+└── tests/
 ```
 
 ## Tech Stack
 
 - **Python** 3.11+
-- **FastAPI** — Dashboard backend
-- **Streamlit** — Dashboard frontend
-- **Google APIs** — Gmail + Calendar
-- **OpenRouter / Ollama** — LLM providers
-- **SQLite** — Local state
-- **systemd** — Production scheduler
+- **Gmail API** / **Google Calendar API** (OAuth2)
+- **OpenRouter** (multi-model) or **Ollama** (local)
+- **Streamlit** (dashboard)
+- **systemd** (scheduling)
+- **SQLite** (state persistence)
+
+## Environment Variables
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `GMAIL_CREDENTIALS_PATH` | Yes | Path to Google OAuth credentials.json |
+| `GMAIL_TOKEN_PATH` | Yes | Path to token.json (auto-generated) |
+| `CALENDAR_CREDENTIALS_PATH` | Yes | Path to Google OAuth credentials.json |
+| `CALENDAR_TOKEN_PATH` | Yes | Path to token.json (auto-generated) |
+| `OPENROUTER_API_KEY` | **Yes** (for AI) | Get from [openrouter.ai/keys](https://openrouter.ai/keys) |
+| `OPENROUTER_MODEL` | No | Default: `openai/gpt-4o-mini` |
+| `OLLAMA_HOST` | No | Default: `http://localhost:11434` |
+| `OLLAMA_MODEL` | No | Default: `llama3.1:8b` |
+| `TELEGRAM_BOT_TOKEN` | No | For Telegram reports |
+| `TELEGRAM_CHAT_ID` | No | Your chat ID |
+| `SCHEDULE_INTERVAL_HOURS` | No | Default: 3 |
 
 ## License
 
